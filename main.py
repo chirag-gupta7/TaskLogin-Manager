@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import engine, Base, get_db
 import models
 import schema
-
+from security import hash_Password, verify_password
 
 Base.metadata.create_all(bind=engine)
 
@@ -46,3 +46,32 @@ def update_Task(id: int, updated_task: schema.TaskCreate, db: Session = Depends(
     db.refresh(task)
     return task
 
+@app.delete("/api/v1/tasks/{id}")
+def delete_Task(id: int, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == id).first()
+
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    db.delete(task)
+    db.commit()
+
+    return {"Details":"Task Deleted Succesfully"}
+
+@app.post("/api/v1/auth/register", response_model= schema.UserResponce)
+def register(user: schema.UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(models.User).filter(models.User.username == user.username).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already taken")
+    
+    hashed_pw = hash_Password(user.password)
+    new_user = models.User(
+        username = user.username,
+        email = user.email,
+        hashed_password = hashed_pw
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user

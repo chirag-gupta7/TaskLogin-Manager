@@ -13,3 +13,17 @@ class TaskResponce(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+
+class UserResponce(BaseModel):
+    id: int
+    username: str
+    email: str
+    role: str
+
+    class config:
+        from_attributes = True
