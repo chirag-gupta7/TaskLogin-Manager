@@ -32,3 +32,17 @@ def create_task(task: schema.TaskCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_task)
     return new_task
+
+@app.put("/api/v1/tasks/{id}", response_model= schema.TaskResponce)
+def update_Task(id: int, updated_task: schema.TaskCreate, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == id).first()
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    task.title = updated_task.title
+    task.description = updated_task.description
+
+    db.commit()
+    db.refresh(task)
+    return task
+
