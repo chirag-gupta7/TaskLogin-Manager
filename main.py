@@ -9,6 +9,8 @@ from security import hash_Password, verify_password, create_access_token, SECRET
 from jose import jwt, JWTError
 from fastapi.security import HTTPBearer
 oauth2_scheme = HTTPBearer()
+from fastapi.exceptions import RequestValidationError
+
 
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 
@@ -22,6 +24,12 @@ async def global_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={"details":"Something went wrong, please try again later"}
     )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = exc.errors()
+    simplified = [{"field": err["loc"][-1], "message": err["msg"]} for err in errors]
+    return JSONResponse(status_code=422, content={"detail": simplified})
 
 def get_current_user(token = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
