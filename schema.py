@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, EmailStr
 
 class TaskCreate(BaseModel):
-    title: str
-    description: str | None = None
+    title: str = Field(min_length=1, max_length=100)
+    description: str | None = Field(default=None, max_length=500)
 
 class TaskResponce(BaseModel):
     id: int
@@ -15,9 +15,9 @@ class TaskResponce(BaseModel):
         from_attributes = True
 
 class UserCreate(BaseModel):
-    username: str
-    email: str
-    password: str
+    username: str = Field(min_length=3, max_length=20)
+    email: EmailStr
+    password: str = Field(min_length=8)
 
 class UserResponce(BaseModel):
     id: int
@@ -27,3 +27,7 @@ class UserResponce(BaseModel):
 
     class config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
