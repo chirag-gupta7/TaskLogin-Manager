@@ -65,8 +65,8 @@ def list_All_Tasks(db: Session = Depends(get_db), current_user: models.User = De
     return tasks
 
 @app.get("/api/v1/tasks/{id}", response_model= schema.TaskResponce)
-def get_Task(id: int, db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id == id).first()
+def get_Task(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    task = db.query(models.Task).filter(models.Task.owner_id == current_user.id).first()
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
