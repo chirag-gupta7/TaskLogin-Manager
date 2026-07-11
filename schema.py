@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 class TaskCreate(BaseModel):
     title: str = Field(min_length=1, max_length=100)
@@ -11,8 +11,7 @@ class TaskResponce(BaseModel):
     status: str
     owner_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=20)
@@ -25,8 +24,7 @@ class UserResponce(BaseModel):
     email: str
     role: str
 
-    class config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserLogin(BaseModel):
     username: str
