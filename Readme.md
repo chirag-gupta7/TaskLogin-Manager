@@ -122,7 +122,7 @@ Current coverage includes:
 
 ## Roadmap
 
-- [ ] Fix unprotected `GET /api/v1/tasks/{id}`
+- [Done] Fix unprotected `GET /api/v1/tasks/{id}`
 - [ ] Move `SECRET_KEY` to environment variable (`.env` + `python-dotenv`)
 - [ ] Dockerfile + docker-compose
 - [ ] Pagination/filtering on task list
